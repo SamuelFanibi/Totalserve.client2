@@ -1,0 +1,38 @@
+trigger: 
+ - MayClass 
+
+pool:
+ vmImage: windows-latest
+
+steps:
+
+- task: NodeTool@0
+  inputs:
+   versionSpec: '21.x'
+  displayName: 'Install Node.js'
+
+- script: npm install
+  displayName: Restore Packages
+  
+- script: npm run build
+  displayName: Build TotalServe clinet Application
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'dist'
+    ArtifactName: 'drop'
+
+- task: DownloadBuildArtifacts@1
+  inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'drop'
+      downloadPath: '$(Build.ArtifactStagingDirectory)'
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'SamfancyConnection'
+    appType: 'webApp'
+    WebAppName: 'samfancyapp'
+    packageForLinux: '$(Build.ArtifactStagingDirectory)/drop'
