@@ -14,7 +14,7 @@ stages:
     displayName: BuildApp
     jobs:
       - job: Build
-        displayName: Build Application
+        displayName: Build Total serve Client Application
         steps:
         - task: NodeTool@0
           inputs:
